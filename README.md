@@ -1,51 +1,37 @@
-# permadiaz
+# Permadiaz
 
-Source for **permadiaz.my.id** — personal portfolio and printable CV for Dias Dzuhry Permadi.
+Personal website for Dias Dzuhry Permadi at https://permadiaz.my.id/.
 
-## Branches
+## Development
 
-- `main` — archived baseline of the old static portfolio.
-- `v2` — current redesign and deploy target.
-
-## v2 stack
-
-- Vite
-- React
-- TypeScript
-- Framer Motion
-- Lucide React
-- Static deployment target: Cloudflare Pages
-
-## Local development
+Use Node.js 22.6 or newer.
 
 ```bash
-npm install
+npm ci
 npm run dev
-```
-
-Production build:
-
-```bash
+npm test
 npm run build
+npm run preview
 ```
 
-Cloudflare build settings:
+Built with React, TypeScript, Vite, and Lucide icons. The studio and product visuals use CSS; the presentation is loaded on demand.
 
-- Production branch: `v2`
-- Build command: `npm run build`
-- Build output directory: `dist`
+## Experiences
 
-## Product direction
+- Interactive studio with four project entry points.
+- Selected work with explicit demo, concept, and live-product labels.
+- Project details and the decisions behind each build.
+- Margin Studio: initially empty, tax off by default, configurable tax, and a saved reference that stays fixed as the live scenario changes.
+- Fictional sales scenario with an explanation for each choice.
+- Five-part personal presentation, including a working pricing demonstration and optional full screen.
+- Responsive layouts, native modal dialogs, keyboard navigation, and reduced-motion support.
 
-The site is intentionally designed as an interactive personal operating system rather than a conventional online CV. Core ideas include:
+Pricing uses gross margin, not markup: selling price = cost / (1 − margin). Selling price and tax round to whole rupiah, so displayed totals match the breakdown. Example tax settings are configurable and make no assertion about the rate applicable to a particular transaction. Inputs remain in browser memory and clear on reload.
 
-- Business / Builder perspective switching
-- Motion-rich but restrained dark visual system
-- Project exploration modals
-- Interactive Margin Studio mini-playground
-- Career timeline
-- Command palette via Cmd/Ctrl + K
-- Responsive mobile experience
-- Reduced-motion accessibility fallback
+## Deployment
 
-The printable CV remains available at `/cv.html`.
+The production branch is `main`. Cloudflare Workers Builds deploys this repository, using `npm run build` and the `dist` assets configured in `wrangler.jsonc`.
+
+`public/_headers` supplies security and static asset caching headers. `public/social-card.svg` is the editable source for the 1200 × 630 social preview PNG. Canonical metadata, structured person data, robots.txt, and sitemap.xml point to the production domain.
+
+The older printable CV source is retained in the repository and is not linked from the site.
