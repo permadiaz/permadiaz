@@ -1,253 +1,582 @@
 import { useEffect, useMemo, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowUpRight, Command, Github, Linkedin, Mail, Sparkles } from 'lucide-react'
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useScroll,
+  useSpring,
+  useTransform,
+} from 'framer-motion'
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  BriefcaseBusiness,
+  Command,
+  Github,
+  Linkedin,
+  Mail,
+  MousePointer2,
+  Sparkles,
+  X,
+  Zap,
+} from 'lucide-react'
 
 type Mode = 'business' | 'builder'
 
-const projects = [
+type Project = {
+  title: string
+  eyebrow: string
+  summary: string
+  detail: string
+  tags: string[]
+  mode: Mode
+  href?: string
+  stat: string
+  statLabel: string
+}
+
+const projects: Project[] = [
   {
     title: 'Margin Studio',
-    type: 'Decision Tool',
-    body: 'Pricing, margin, tax and multi-year scenario playground designed to speed up sales decisions.',
-    tags: ['Pricing', 'Sales Ops', 'Scenario'],
+    eyebrow: 'Commercial Decision Engine',
+    summary: 'Pricing, margin, tax, discount, and multi-year scenario thinking turned into one sales playground.',
+    detail: 'Built around one job: shorten the time between receiving principle cost and deciding the customer-facing number. It keeps previous scenarios visible so commercial trade-offs are easy to compare.',
+    tags: ['Pricing', 'Sales Ops', 'Decision UX'],
     mode: 'business',
+    stat: 'Seconds',
+    statLabel: 'to compare scenarios',
   },
   {
     title: 'AE Intel',
-    type: 'Sales Intelligence',
-    body: 'A structured account-hunting workflow for research, outreach, follow-up and opportunity tracking.',
-    tags: ['AI', 'Sales', 'Workflow'],
+    eyebrow: 'Account Intelligence System',
+    summary: 'A practical operating system for account research, outreach, discovery, follow-up, and opportunity memory.',
+    detail: 'Designed around real enterprise hunting: contact mapping, evidence-based research, conversation strategy, follow-up timing, and movement from lead to qualified opportunity.',
+    tags: ['AI Workflow', 'Account Strategy', 'Sales'],
     mode: 'business',
+    stat: '1',
+    statLabel: 'account at a time',
   },
   {
     title: 'StartFrom',
-    type: 'PWA Product',
-    body: 'A local-first financial roadmap app that turns goals into a practical daily plan.',
+    eyebrow: 'Local-first PWA',
+    summary: 'A personal financial roadmap experience that turns a target into a practical daily plan.',
+    detail: 'A cost-conscious product experiment: installable, offline-capable, local-first, and designed to stay useful without requiring an expensive backend.',
     tags: ['PWA', 'AI', 'Product'],
     mode: 'builder',
+    href: 'https://startfrom.my.id',
+    stat: '0',
+    statLabel: 'mandatory backend cost',
   },
   {
     title: 'CangkulYuk!',
-    type: 'Realtime Game',
-    body: 'A realtime Indonesian card game with bot logic, multiplayer state and resilient reconnect flows.',
+    eyebrow: 'Realtime Multiplayer',
+    summary: 'An Indonesian card game with multiplayer state, reconnect behavior, bots, and automatic host migration.',
+    detail: 'Built as a real product experiment instead of a static demo: gameplay rules separated from the DOM, multiplayer presence, recovery flows, and automated simulation tests.',
     tags: ['Realtime', 'Supabase', 'Game'],
     mode: 'builder',
+    href: 'https://cangkulyuk.my.id',
+    stat: '5K+',
+    statLabel: 'simulated test runs',
   },
 ]
 
 const career = [
-  ['2026 — now', 'Account Executive', 'Datalabs', 'Cloud, AI, enterprise conversations, account development.'],
-  ['2024 — 2026', 'Business Development', 'PT. Berkah Niaga Globalindo', 'B2B negotiation, procurement and strategic growth.'],
-  ['2021 — 2022', 'Business Representative', 'PT. Berca Hardayaperkasa', 'Enterprise IT sales and 100% annual quota achievement.'],
+  {
+    period: '2026 — now',
+    role: 'Account Executive',
+    org: 'Datalabs',
+    copy: 'Enterprise conversations around cloud, AI, data, and business outcomes in the Google Cloud ecosystem.',
+    current: true,
+  },
+  {
+    period: '2026',
+    role: 'Curriculum & AI Transformation',
+    org: 'Aman Jaya',
+    copy: 'Built practical digital concepts around curriculum control, RPS consistency, dashboards, and AI for Work.',
+  },
+  {
+    period: '2024 — 2026',
+    role: 'Business Development',
+    org: 'PT. Berkah Niaga Globalindo',
+    copy: 'B2B negotiation, procurement, consulting relationships, team coordination, and strategic growth.',
+  },
+  {
+    period: '2021 — 2022',
+    role: 'Business Representative — IT Solutions',
+    org: 'PT. Berca Hardayaperkasa',
+    copy: 'Enterprise IT sales, account management, tenders, and 100% annual quota achievement.',
+  },
 ]
+
+const businessCapabilities = [
+  'Enterprise / B2B Sales',
+  'Account Development',
+  'Consultative Selling',
+  'Tender & Procurement',
+  'Cloud & AI Conversations',
+  'Commercial Strategy',
+]
+
+const builderCapabilities = [
+  'Product Prototyping',
+  'AI-assisted Development',
+  'TypeScript / Web Apps',
+  'Supabase / Realtime',
+  'Workflow Automation',
+  'UX for Decision Tools',
+]
+
+function formatIDR(value: number) {
+  return 'Rp' + Math.round(value).toLocaleString('id-ID')
+}
 
 export default function App() {
   const [mode, setMode] = useState<Mode>('business')
   const [commandOpen, setCommandOpen] = useState(false)
-  const [easter, setEaster] = useState(0)
+  const [selected, setSelected] = useState<Project | null>(null)
   const [margin, setMargin] = useState(18)
+  const [easter, setEaster] = useState(0)
+
+  const pointerX = useMotionValue(-400)
+  const pointerY = useMotionValue(-400)
+  const smoothX = useSpring(pointerX, { stiffness: 120, damping: 26, mass: 0.45 })
+  const smoothY = useSpring(pointerY, { stiffness: 120, damping: 26, mass: 0.45 })
+
+  const { scrollYProgress } = useScroll()
+  const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 32 })
+  const heroY = useTransform(scrollYProgress, [0, 0.35], [0, 110])
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0.45])
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
+    const move = (e: PointerEvent) => {
+      pointerX.set(e.clientX)
+      pointerY.set(e.clientY)
+    }
+    const key = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault()
         setCommandOpen(v => !v)
       }
-      if (e.key === 'Escape') setCommandOpen(false)
+      if (e.key === 'Escape') {
+        setCommandOpen(false)
+        setSelected(null)
+      }
     }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [])
+    window.addEventListener('pointermove', move)
+    window.addEventListener('keydown', key)
+    return () => {
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('keydown', key)
+    }
+  }, [pointerX, pointerY])
 
-  const visibleProjects = useMemo(
-    () => projects.filter(p => p.mode === mode),
-    [mode]
-  )
-
-  const sellPrice = Math.round(850_000_000 / (1 - margin / 100))
+  const visibleProjects = useMemo(() => projects.filter(p => p.mode === mode), [mode])
+  const capabilities = mode === 'business' ? businessCapabilities : builderCapabilities
+  const sellPrice = 850_000_000 / (1 - margin / 100)
 
   return (
-    <main>
-      <div className="ambient ambient-a" />
-      <div className="ambient ambient-b" />
+    <main className="site">
+      <motion.div className="scroll-progress" style={{ scaleX: progress }} />
+      <motion.div className="cursor-glow" style={{ x: smoothX, y: smoothY }} />
+      <div className="noise" aria-hidden="true" />
+      <div className="orb orb-a" aria-hidden="true" />
+      <div className="orb orb-b" aria-hidden="true" />
 
       <nav className="nav shell">
-        <a href="#top" className="brand">PERMADIAZ</a>
-        <div className="nav-right">
-          <button className="cmd" onClick={() => setCommandOpen(true)}>
-            <Command size={15}/> <span>⌘K</span>
-          </button>
+        <a className="brand" href="#top">PERMADIAZ<span>.</span></a>
+        <div className="nav-center">
+          <a href="#work">Work</a>
+          <a href="#career">Career</a>
           <a href="#contact">Contact</a>
+        </div>
+        <div className="nav-right">
+          <button className="command-trigger" onClick={() => setCommandOpen(true)}>
+            <Command size={14} />
+            <span className="command-label">Navigate</span>
+            <kbd>⌘K</kbd>
+          </button>
         </div>
       </nav>
 
       <section id="top" className="hero shell">
-        <motion.div
-          className="eyebrow"
-          initial={{opacity:0,y:10}}
-          animate={{opacity:1,y:0}}
-          transition={{duration:.5}}
-        >
-          <Sparkles size={14}/> Business × Cloud × AI × Product
-        </motion.div>
-
-        <motion.h1
-          initial={{opacity:0,y:18}}
-          animate={{opacity:1,y:0}}
-          transition={{duration:.65,delay:.08}}
-        >
-          I turn <span>complex technology</span><br/>into clear business momentum.
-        </motion.h1>
-
-        <motion.p
-          className="lede"
-          initial={{opacity:0,y:18}}
-          animate={{opacity:1,y:0}}
-          transition={{duration:.65,delay:.16}}
-        >
-          Dias Dzuhry Permadi — an account executive and business developer who also prototypes, builds and ships digital products.
-        </motion.p>
-
-        <div className="hero-actions">
-          <a className="button primary magnetic" href="#work">Explore my work <ArrowUpRight size={17}/></a>
-          <a className="button ghost" href="/cv.html" target="_blank">Open CV</a>
-        </div>
-
-        <div className="mode-switch" role="group" aria-label="Profile mode">
-          <button className={mode==='business'?'active':''} onClick={()=>setMode('business')}>Business</button>
-          <button className={mode==='builder'?'active':''} onClick={()=>setMode('builder')}>Builder</button>
-          <motion.div className="mode-pill" animate={{x: mode==='business' ? 0 : '100%'}} transition={{type:'spring',stiffness:320,damping:28}}/>
-        </div>
-
-        <AnimatePresence mode="wait">
+        <motion.div className="hero-inner" style={{ y: heroY, opacity: heroOpacity }}>
           <motion.div
-            key={mode}
-            className="mode-copy"
-            initial={{opacity:0,y:10}}
-            animate={{opacity:1,y:0}}
-            exit={{opacity:0,y:-8}}
-            transition={{duration:.25}}
+            className="availability"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
           >
-            {mode === 'business'
-              ? 'Enterprise conversations, commercial strategy, cloud & AI solution selling.'
-              : 'Product experiments, front-end systems, automation and AI-assisted prototyping.'}
+            <span className="pulse-dot" />
+            Account Executive · Cloud & AI · Jakarta
           </motion.div>
-        </AnimatePresence>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 26 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: .72, ease: [0.2, 0.8, 0.2, 1] }}
+          >
+            Business brain.<br />
+            <span className="gradient-text">Builder instinct.</span>
+          </motion.h1>
+
+          <motion.p
+            className="hero-copy"
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: .62, delay: .1 }}
+          >
+            I work at the intersection of enterprise sales, cloud & AI, and hands-on product building —
+            translating complexity into something people can buy, use, and understand.
+          </motion.p>
+
+          <motion.div
+            className="hero-actions"
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: .18 }}
+          >
+            <a className="button button-primary" href="#work">
+              Explore the system <ArrowDownRight size={17} />
+            </a>
+            <a className="button button-ghost" href="/cv.html" target="_blank">
+              Open CV <ArrowUpRight size={16} />
+            </a>
+          </motion.div>
+
+          <div className="hero-bottom">
+            <div className="mode-shell">
+              <div className="mode-label">Perspective</div>
+              <div className="mode-switch" role="group" aria-label="Choose profile perspective">
+                <motion.div
+                  className="mode-indicator"
+                  animate={{ x: mode === 'business' ? 0 : '100%' }}
+                  transition={{ type: 'spring', stiffness: 340, damping: 30 }}
+                />
+                <button className={mode === 'business' ? 'active' : ''} onClick={() => setMode('business')}>
+                  Business
+                </button>
+                <button className={mode === 'builder' ? 'active' : ''} onClick={() => setMode('builder')}>
+                  Builder
+                </button>
+              </div>
+            </div>
+            <AnimatePresence mode="wait">
+              <motion.p
+                className="perspective-copy"
+                key={mode}
+                initial={{ opacity: 0, y: 7 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -7 }}
+              >
+                {mode === 'business'
+                  ? 'Commercial strategy, account movement, customer conversations, and business outcomes.'
+                  : 'Prototyping, automation, product systems, and shipping ideas into working software.'}
+              </motion.p>
+            </AnimatePresence>
+          </div>
+        </motion.div>
+      </section>
+
+      <section className="marquee-wrap" aria-hidden="true">
+        <div className="marquee">
+          <span>SELL THE OUTCOME</span><i>✦</i><span>BUILD THE PROOF</span><i>✦</i>
+          <span>MAKE IT CLEAR</span><i>✦</i><span>KEEP IT USEFUL</span><i>✦</i>
+          <span>SELL THE OUTCOME</span><i>✦</i><span>BUILD THE PROOF</span><i>✦</i>
+        </div>
+      </section>
+
+      <section className="shell proof-grid section">
+        <article>
+          <span className="proof-number">8+</span>
+          <p>years across B2B sales, account management, and business development</p>
+        </article>
+        <article>
+          <span className="proof-number">100%</span>
+          <p>annual quota achievement at Berca Hardayaperkasa</p>
+        </article>
+        <article>
+          <span className="proof-number">2+</span>
+          <p>live digital products built and shipped independently</p>
+        </article>
+        <article>
+          <span className="proof-number">1</span>
+          <p>operating principle: make complicated things easier to act on</p>
+        </article>
       </section>
 
       <section id="work" className="shell section">
         <div className="section-head">
           <div>
-            <div className="kicker">Selected Work</div>
-            <h2>Built to be explored.</h2>
+            <div className="kicker">Selected systems</div>
+            <h2>Not slides.<br />Things you can <em>touch.</em></h2>
           </div>
-          <span className="hint">hover · click · play</span>
+          <div className="section-side">
+            <MousePointer2 size={16} />
+            Try the cards
+          </div>
         </div>
 
         <div className="project-grid">
-          {visibleProjects.map((project, i) => (
-            <motion.article
+          {visibleProjects.map((project, index) => (
+            <motion.button
               className="project-card"
               key={project.title}
-              initial={{opacity:0,y:22}}
-              whileInView={{opacity:1,y:0}}
-              viewport={{once:true,amount:.3}}
-              transition={{duration:.45,delay:i*.06}}
-              whileHover={{y:-7,rotateX:1.5,rotateY:-1.5}}
+              onClick={() => setSelected(project)}
+              initial={{ opacity: 0, y: 26 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: .25 }}
+              transition={{ duration: .48, delay: index * .06 }}
+              whileHover={{ y: -8 }}
             >
-              <div className="project-top">
-                <span>{project.type}</span>
-                <ArrowUpRight size={18}/>
+              <div className="project-card-top">
+                <span>{project.eyebrow}</span>
+                <div className="project-arrow"><ArrowUpRight size={18} /></div>
               </div>
-              <h3>{project.title}</h3>
-              <p>{project.body}</p>
-              <div className="tags">{project.tags.map(t=><span key={t}>{t}</span>)}</div>
-            </motion.article>
+              <div className="project-card-body">
+                <h3>{project.title}</h3>
+                <p>{project.summary}</p>
+              </div>
+              <div className="project-card-bottom">
+                <div className="tag-row">
+                  {project.tags.map(tag => <span key={tag}>{tag}</span>)}
+                </div>
+                <div className="micro-stat">
+                  <b>{project.stat}</b>
+                  <small>{project.statLabel}</small>
+                </div>
+              </div>
+            </motion.button>
           ))}
         </div>
 
         {mode === 'business' && (
-          <div className="playground">
-            <div>
-              <div className="kicker">Mini Playground</div>
-              <h3>Margin Studio — live concept</h3>
-              <p>Move the margin. The output reacts instantly.</p>
-            </div>
-            <div className="calc">
-              <div className="calc-row"><span>Cost</span><b>Rp850.000.000</b></div>
-              <label>
-                <span>Margin <b>{margin}%</b></span>
-                <input type="range" min="5" max="35" value={margin} onChange={e=>setMargin(Number(e.target.value))}/>
-              </label>
-              <div className="result">
-                <span>Suggested sell price</span>
-                <strong>Rp{sellPrice.toLocaleString('id-ID')}</strong>
+          <motion.div
+            className="playground"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <div className="playground-copy">
+              <div className="kicker">Playground · Margin Studio</div>
+              <h3>Move one number.<br />Feel the decision.</h3>
+              <p>
+                This is the idea behind the product: reduce spreadsheet friction and make pricing trade-offs visible immediately.
+              </p>
+              <div className="playground-cost">
+                <span>Principle cost</span>
+                <strong>Rp850.000.000</strong>
               </div>
             </div>
-          </div>
+            <div className="calculator">
+              <div className="calculator-head">
+                <span>Live pricing scenario</span>
+                <Zap size={16} />
+              </div>
+              <label>
+                <div className="range-label">
+                  <span>Target margin</span>
+                  <b>{margin}%</b>
+                </div>
+                <input
+                  type="range"
+                  min="5"
+                  max="35"
+                  value={margin}
+                  onChange={event => setMargin(Number(event.target.value))}
+                />
+              </label>
+              <div className="price-output">
+                <span>Suggested sell price</span>
+                <motion.strong key={margin} initial={{ opacity: .45, y: 5 }} animate={{ opacity: 1, y: 0 }}>
+                  {formatIDR(sellPrice)}
+                </motion.strong>
+              </div>
+              <div className="calc-meta">
+                <span>Gross profit</span>
+                <b>{formatIDR(sellPrice - 850_000_000)}</b>
+              </div>
+            </div>
+          </motion.div>
         )}
       </section>
 
-      <section className="shell section">
+      <section className="shell section capabilities">
+        <div className="section-head compact">
+          <div>
+            <div className="kicker">{mode === 'business' ? 'Commercial layer' : 'Builder layer'}</div>
+            <h2>The capability stack.</h2>
+          </div>
+        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            className="capability-grid"
+            key={mode}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+          >
+            {capabilities.map((item, index) => (
+              <motion.div
+                className="capability-pill"
+                key={item}
+                initial={{ opacity: 0, scale: .97 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * .035 }}
+              >
+                <span>0{index + 1}</span>
+                {item}
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
+      </section>
+
+      <section id="career" className="shell section career-section">
         <div className="section-head">
           <div>
-            <div className="kicker">Career</div>
-            <h2>A commercial path through technology.</h2>
+            <div className="kicker">Career signal</div>
+            <h2>Commercial experience.<br />Technical curiosity.</h2>
           </div>
         </div>
         <div className="timeline">
-          {career.map(([year,role,org,desc],i)=>(
-            <motion.div
+          {career.map((item, index) => (
+            <motion.article
               className="timeline-item"
-              key={role}
-              initial={{opacity:0,x:-18}}
-              whileInView={{opacity:1,x:0}}
-              viewport={{once:true,amount:.35}}
-              transition={{duration:.4,delay:i*.05}}
+              key={item.role + item.org}
+              initial={{ opacity: 0, x: -18 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: .35 }}
+              transition={{ duration: .42, delay: index * .055 }}
             >
-              <div className="dot"/>
-              <div className="year">{year}</div>
-              <div>
-                <h3>{role}</h3>
-                <div className="org">{org}</div>
-                <p>{desc}</p>
+              <div className="timeline-node">
+                <span className={item.current ? 'current' : ''} />
               </div>
-            </motion.div>
+              <div className="timeline-period">{item.period}</div>
+              <div className="timeline-main">
+                <div className="timeline-title">
+                  <h3>{item.role}</h3>
+                  {item.current && <small>Current</small>}
+                </div>
+                <div className="timeline-org">{item.org}</div>
+                <p>{item.copy}</p>
+              </div>
+            </motion.article>
           ))}
         </div>
       </section>
 
-      <section id="contact" className="contact shell section">
-        <div>
-          <div className="kicker">Contact</div>
-          <h2>Good conversations usually start simple.</h2>
-          <p>Cloud, AI, enterprise sales, product ideas, or just a useful introduction.</p>
-        </div>
-        <div className="contact-links">
-          <a href="mailto:permadi.diaz@gmail.com"><Mail size={18}/> Email</a>
-          <a href="https://linkedin.com/in/dias-d-permadi-7b9417179" target="_blank"><Linkedin size={18}/> LinkedIn</a>
-          <a href="https://github.com/permadiaz" target="_blank"><Github size={18}/> GitHub</a>
+      <section className="shell manifesto section">
+        <div className="kicker">How I think</div>
+        <div className="manifesto-grid">
+          <h2>Technology is only useful when somebody can decide what to do next.</h2>
+          <div>
+            <p>
+              My strongest work sits between business and technology: understand the commercial problem,
+              make the language simpler, prototype the idea, and move the conversation forward.
+            </p>
+            <p>
+              I don't need every project to become a platform. Sometimes the best product is the smallest thing
+              that removes uncertainty.
+            </p>
+          </div>
         </div>
       </section>
 
-      <footer className="shell footer">
-        <button onClick={()=>setEaster(v=>v+1)}>Built by Dias. Mostly.</button>
-        {easter >= 5 && <span>System: curiosity detected +1</span>}
+      <section id="contact" className="shell contact section">
+        <div className="contact-card">
+          <div className="contact-top">
+            <div>
+              <div className="kicker">Open channel</div>
+              <h2>Useful conversation?</h2>
+              <p>Cloud, AI, enterprise sales, product ideas, partnerships, or a warm introduction.</p>
+            </div>
+            <BriefcaseBusiness size={28} />
+          </div>
+          <div className="contact-actions">
+            <a href="mailto:permadi.diaz@gmail.com"><Mail size={18} /> Email</a>
+            <a href="https://linkedin.com/in/dias-d-permadi-7b9417179" target="_blank" rel="noreferrer"><Linkedin size={18} /> LinkedIn</a>
+            <a href="https://github.com/permadiaz" target="_blank" rel="noreferrer"><Github size={18} /> GitHub</a>
+          </div>
+        </div>
+      </section>
+
+      <footer className="footer shell">
+        <button onClick={() => setEaster(v => v + 1)}>Built by Dias. Mostly.</button>
+        <span>permadiaz.my.id · 2026</span>
+        <AnimatePresence>
+          {easter >= 5 && (
+            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="easter">
+              curiosity detected +1
+            </motion.span>
+          )}
+        </AnimatePresence>
       </footer>
 
       <AnimatePresence>
+        {selected && (
+          <motion.div
+            className="overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelected(null)}
+          >
+            <motion.div
+              className="project-modal"
+              initial={{ opacity: 0, y: 24, scale: .98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: .985 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+              onClick={event => event.stopPropagation()}
+            >
+              <button className="modal-close" onClick={() => setSelected(null)}><X size={18} /></button>
+              <div className="kicker">{selected.eyebrow}</div>
+              <h3>{selected.title}</h3>
+              <p>{selected.detail}</p>
+              <div className="tag-row modal-tags">{selected.tags.map(tag => <span key={tag}>{tag}</span>)}</div>
+              <div className="modal-stat">
+                <strong>{selected.stat}</strong>
+                <span>{selected.statLabel}</span>
+              </div>
+              {selected.href && (
+                <a className="button button-primary modal-link" href={selected.href} target="_blank" rel="noreferrer">
+                  Open live project <ArrowUpRight size={16} />
+                </a>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
         {commandOpen && (
-          <motion.div className="overlay" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} onClick={()=>setCommandOpen(false)}>
-            <motion.div className="palette" initial={{opacity:0,scale:.96,y:-12}} animate={{opacity:1,scale:1,y:0}} exit={{opacity:0,scale:.98,y:-8}} onClick={e=>e.stopPropagation()}>
-              <div className="palette-head"><Command size={17}/> Navigate</div>
+          <motion.div
+            className="overlay command-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setCommandOpen(false)}
+          >
+            <motion.div
+              className="palette"
+              initial={{ opacity: 0, y: -16, scale: .98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: .985 }}
+              onClick={event => event.stopPropagation()}
+            >
+              <div className="palette-head">
+                <div><Command size={17} /> Jump anywhere</div>
+                <kbd>ESC</kbd>
+              </div>
               {[
-                ['About / Hero','#top'],
-                ['Selected Work','#work'],
-                ['Contact','#contact'],
-                ['Open CV','/cv.html'],
-              ].map(([label,href])=>(
-                <a key={label} href={href} onClick={()=>setCommandOpen(false)}>
-                  <span>{label}</span><ArrowUpRight size={16}/>
+                ['01', 'Top', '#top'],
+                ['02', 'Selected work', '#work'],
+                ['03', 'Career', '#career'],
+                ['04', 'Contact', '#contact'],
+                ['05', 'Open CV', '/cv.html'],
+              ].map(([number, label, href]) => (
+                <a key={label} href={href} onClick={() => setCommandOpen(false)}>
+                  <span><small>{number}</small>{label}</span>
+                  <ArrowUpRight size={16} />
                 </a>
               ))}
             </motion.div>
