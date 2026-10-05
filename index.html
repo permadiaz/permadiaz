@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dias Dzuhry Permadi — Business Development & AI Builder</title>
+<meta name="description" content="Dias Dzuhry Permadi: 8+ tahun B2B Sales & Business Development, sekaligus builder produk AI web yang sudah live — PWA, game multiplayer realtime, engine teruji otomatis.">
+<meta name="theme-color" content="#05070f">
+<meta property="og:title" content="Dias Dzuhry Permadi — BD & AI Builder">
+<meta property="og:description" content="8+ tahun B2B Sales & BD. Juga build & deploy produk AI web sendiri: PWA, realtime multiplayer, automated test suite.">
+<meta property="og:type" content="website">
+<style>
+:root{
+  --bg:#05070f;--card:#0e1525;--card2:#111a2e;--border:rgba(255,255,255,.08);
+  --text:#f2f5fb;--muted:#9aa6bd;--muted2:#5f6b85;
+  --cyan:#22d3ee;--blue:#3b82f6;--green:#34d399;--purple:#a855f7;--pink:#ec4899;--orange:#f59e0b;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);line-height:1.6;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(34,211,238,.12),transparent 60%),
+                   radial-gradient(ellipse 70% 50% at 90% 10%,rgba(168,85,247,.10),transparent 55%);
+  overflow-x:hidden;
+}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+section{padding:56px 0}
+a{color:inherit}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.5px;padding:5px 11px;border-radius:99px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);margin:3px 4px 3px 0}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:14px;text-decoration:none;
+  padding:13px 20px;border-radius:13px;transition:transform .15s,box-shadow .2s,background .2s;cursor:pointer;border:none;font-family:inherit}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(135deg,var(--cyan),var(--blue));color:#04121f;box-shadow:0 6px 24px rgba(34,211,238,.28)}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-ghost{background:rgba(255,255,255,.04);border:1.5px solid var(--border);color:var(--text)}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+
+/* HERO */
+.hero{padding-top:80px;text-align:center}
+.avatar{width:96px;height:96px;border-radius:50%;margin:0 auto 22px;display:flex;align-items:center;justify-content:center;
+  font-size:40px;font-weight:900;background:linear-gradient(135deg,#13284a,#05070f);
+  border:2px solid rgba(34,211,238,.35);box-shadow:0 0 40px rgba(34,211,238,.25)}
+.hero h1{font-size:clamp(30px,7vw,46px);font-weight:900;letter-spacing:-1px;line-height:1.1;margin-bottom:10px}
+.hero h1 .grad{background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .role{font-size:15px;font-weight:700;color:var(--cyan);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px}
+.hero p{color:var(--muted);max-width:580px;margin:0 auto 26px;font-size:15px}
+.hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:46px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 12px;text-align:center}
+.stat .n{font-size:clamp(20px,5vw,28px);font-weight:900;color:var(--cyan)}
+.stat .l{font-size:11px;color:var(--muted);font-weight:600;margin-top:4px;letter-spacing:.3px}
+
+.section-title{font-size:13px;font-weight:800;letter-spacing:2px;color:var(--muted2);text-transform:uppercase;margin-bottom:20px;text-align:center}
+
+/* PROJECTS */
+.project{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:26px;margin-bottom:22px;position:relative;overflow:hidden}
+.project::before{content:'';position:absolute;inset:0 0 auto 0;height:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.p1{--accent:var(--cyan)} .p2{--accent:var(--pink)}
+.project .ptag{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--accent)}
+.project h2{font-size:24px;font-weight:900;margin:6px 0 4px}
+.project .sub{color:var(--muted);font-size:14px;margin-bottom:16px}
+.project ul{list-style:none;margin:14px 0 16px}
+.project ul li{font-size:13.5px;color:#d7deeb;padding-left:24px;position:relative;margin-bottom:9px;line-height:1.55}
+.project ul li::before{content:'▹';position:absolute;left:4px;color:var(--accent);font-weight:900}
+.project ul li b{color:#fff}
+.p-tags{margin:4px 0 18px}
+.p-cta{display:flex;gap:10px;flex-wrap:wrap}
+
+/* SKILLS */
+.skills{display:flex;flex-wrap:wrap;gap:9px;justify-content:center}
+.skills .tag{font-size:12.5px;color:#cdd6e8;border-color:rgba(34,211,238,.2);background:rgba(34,211,238,.05)}
+
+/* ABOUT */
+.about{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:28px;text-align:center}
+.about p{color:var(--muted);max-width:620px;margin:0 auto 14px;font-size:14.5px}
+.about .em{color:#e7ecf6}
+
+/* CONTACT */
+.contact{text-align:center}
+.contact h2{font-size:clamp(24px,6vw,34px);font-weight:900;margin-bottom:10px}
+.contact p{color:var(--muted);margin-bottom:22px}
+.links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+footer{text-align:center;color:var(--muted2);font-size:12px;padding:34px 0 50px}
+@media(max-width:560px){section{padding:40px 0}.stats{gap:9px}}
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<header class="hero wrap">
+  <div class="avatar">D</div>
+  <div class="role">Business Development · Account Manager · AI Builder</div>
+  <h1>Halo, saya <span class="grad">Dias</span>.<br>Sales leader yang juga <span class="grad">build AI.</span></h1>
+  <p>8+ tahun B2B sales & business development — dan satu-satunya yang juga bisa build & deploy produk AI-powered sendiri. IDR 2 Miliar quota tercapai. Dua produk web sudah live.</p>
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="#proyek">🚀 Lihat Produk</a>
+    <a class="btn btn-ghost" href="cv.html" target="_blank" rel="noopener">📄 Lihat CV</a>
+    <a class="btn btn-ghost" href="#kontak">✉️ Hubungi Saya</a>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="n">8+</div><div class="l">Tahun B2B Sales</div></div>
+    <div class="stat"><div class="n">IDR 2M</div><div class="l">Quota Tercapai 100%</div></div>
+    <div class="stat"><div class="n">2</div><div class="l">Produk AI Live</div></div>
+  </div>
+</header>
+
+<!-- ============ PROJECTS ============ -->
+<section id="proyek" class="wrap">
+  <div class="section-title">★ Produk yang Sudah Live</div>
+
+  <!-- Neon Cangkul -->
+  <article class="project p2">
+    <div class="ptag">⚡ Realtime Multiplayer Game</div>
+    <h2>CangkulYuk! / Neon Cangkul</h2>
+    <div class="sub">Game kartu Cangkul (remi klasik Indonesia) bertema neon — main lawan bot, mode cerita berjenjang, atau online multiplayer.</div>
+    <div class="p-tags">
+      <span class="tag">Vanilla JS</span><span class="tag">Supabase Realtime</span><span class="tag">Web Audio API</span>
+      <span class="tag">Speech Synthesis</span><span class="tag">Node + jsdom (Test)</span>
+    </div>
+    <ul>
+      <li><b>Arsitektur testable:</b> rules engine murni tanpa DOM, jalan di browser & Node — logika sama bisa diuji otomatis.</li>
+      <li><b>Test otomatis (7 suite):</b> 5.000+ simulasi dengan <i>invariant checks</i> (kartu tak hilang, game selalu berhenti, ranking valid).</li>
+      <li><b>Online multiplayer:</b> presence, chat, reconnect, dan <b>host-migration otomatis</b> saat host keluar.</li>
+      <li><b>Bot AI 3 tingkat</b> + boss berjenjang, audio prosedural tanpa file, taunt bersuara Bahasa Indonesia.</li>
+    </ul>
+    <div class="p-cta">
+      <a class="btn btn-primary" id="link-cangkul-demo" href="https://cangkulyuk.my.id" target="_blank" rel="noopener">▶ Main Sekarang</a>
+      <a class="btn btn-ghost" href="https://github.com/gagasa-best/cangkulyangdalam" target="_blank" rel="noopener">⌥ Kode di GitHub</a>
+    </div>
+  </article>
+
+  <!-- StartFrom -->
+  <article class="project p1">
+    <div class="ptag">📱 Progressive Web App · AI-Powered</div>
+    <h2>StartFrom — Anti-Wacana Engine</h2>
+    <div class="sub">PWA yang mengubah target finansial jadi roadmap harian realistis + jalur bisnis mikro. Terintegrasi AI mentor (Claude API) dan bisa diekspor ke Excel.</div>
+    <div class="p-tags">
+      <span class="tag">PWA</span><span class="tag">Anthropic Claude API</span><span class="tag">Service Worker</span>
+      <span class="tag">Canvas</span><span class="tag">Midtrans</span><span class="tag">Cloudflare</span>
+    </div>
+    <ul>
+      <li><b>PWA penuh:</b> installable + offline (service worker network-first), mobile-first.</li>
+      <li><b>AI Mentor</b> terintegrasi via Anthropic Claude API + payment gateway Midtrans.</li>
+      <li><b>Zero-backend by design:</b> data local-first — privasi terjaga, biaya nol, jalan offline.</li>
+      <li><b>Keputusan sadar biaya:</b> menambah lalu menghapus Supabase Edge Function demi model free-access.</li>
+    </ul>
+    <div class="p-cta">
+      <a class="btn btn-primary" id="link-startfrom-demo" href="https://startfrom.my.id" target="_blank" rel="noopener">▶ Buka Aplikasi</a>
+      <a class="btn btn-ghost" href="https://github.com/gagasa-best/Starfrom" target="_blank" rel="noopener">⌥ Kode di GitHub</a>
+    </div>
+  </article>
+</section>
+
+<!-- ============ SKILLS ============ -->
+<section class="wrap">
+  <div class="section-title">🛠️ Keahlian</div>
+  <div class="skills">
+    <span class="tag">B2B Sales & Business Development</span><span class="tag">Account Management</span>
+    <span class="tag">Tender & Procurement</span><span class="tag">Team Leadership</span>
+    <span class="tag">Anthropic Claude API</span><span class="tag">Prompt Engineering</span>
+    <span class="tag">JavaScript (vanilla)</span><span class="tag">PWA · Service Worker</span>
+    <span class="tag">Supabase Realtime</span><span class="tag">Automated Testing</span>
+    <span class="tag">Git / GitHub</span><span class="tag">Cloudflare / Netlify</span>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="wrap">
+  <div class="section-title">👋 Tentang Saya</div>
+  <div class="about">
+    <p><span class="em">8+ tahun di dunia B2B sales & business development</span> — dari enterprise IT distribution, FMCG, sampai MEP engineering. Terbiasa closing deal besar, menang tender, dan memimpin tim.</p>
+    <p>Yang membedakan: saya juga <span class="em">build dan deploy produk AI sendiri</span>. Dua aplikasi di atas saya rancang, kode, uji, dan live-kan — bukan sekadar pakai tools AI, tapi mengintegrasikan API dan membuat keputusan arsitektur yang sadar trade-off.</p>
+    <p>Terbuka untuk peran <span class="em">Account Manager · Business Development Manager · Pre-Sales Consultant</span> di perusahaan tech, SaaS, atau IT.</p>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="kontak" class="contact wrap">
+  <h2>Mari berkolaborasi 🚀</h2>
+  <p>Cari AM / BDM yang ngerti bisnis <i>sekaligus</i> paham teknologi? Let's talk.</p>
+  <div class="links">
+    <a class="btn btn-primary" id="link-wa" href="https://wa.me/6285771291959" target="_blank" rel="noopener">💬 WhatsApp</a>
+    <a class="btn btn-ghost" id="link-email" href="mailto:permadi.diaz@gmail.com">✉️ Email</a>
+    <a class="btn btn-ghost" href="https://github.com/gagasa-best" target="_blank" rel="noopener">⌥ GitHub</a>
+    <a class="btn btn-ghost" href="https://linkedin.com/in/dias-d-permadi-7b9417179" target="_blank" rel="noopener">🔗 LinkedIn</a>
+    <a class="btn btn-ghost" id="link-ig" href="https://instagram.com/permadiaz" target="_blank" rel="noopener">📷 Instagram</a>
+  </div>
+</section>
+
+<footer>Dias Dzuhry Permadi (@permadiaz) · BD & AI Builder · Jakarta ⚡</footer>
+
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"caa09d18401d4ee6aea05918fd55814a","r":1,"spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
