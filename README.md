@@ -1,18 +1,51 @@
 # permadiaz
 
-Personal portfolio and online CV for Dias Dzuhry Permadi.
+Source for **permadiaz.my.id** — personal portfolio and printable CV for Dias Dzuhry Permadi.
 
-## Current state
-- `index.html` — current live portfolio baseline
-- `cv.html` — current printable CV baseline
+## Branches
 
-This repository is the source of truth for the next version of permadiaz.my.id.
+- `main` — archived baseline of the old static portfolio.
+- `v2` — current redesign and deploy target.
 
-## Roadmap
-The next iteration will focus on:
-- premium interactive visual design
-- business / builder dual-mode storytelling
-- richer project case studies
-- refined motion and micro-interactions
-- responsive performance
-- maintainable deployment workflow via GitHub + Cloudflare
+## v2 stack
+
+- Vite
+- React
+- TypeScript
+- Framer Motion
+- Lucide React
+- Static deployment target: Cloudflare Pages
+
+## Local development
+
+```bash
+npm install
+npm run dev
+```
+
+Production build:
+
+```bash
+npm run build
+```
+
+Cloudflare build settings:
+
+- Production branch: `v2`
+- Build command: `npm run build`
+- Build output directory: `dist`
+
+## Product direction
+
+The site is intentionally designed as an interactive personal operating system rather than a conventional online CV. Core ideas include:
+
+- Business / Builder perspective switching
+- Motion-rich but restrained dark visual system
+- Project exploration modals
+- Interactive Margin Studio mini-playground
+- Career timeline
+- Command palette via Cmd/Ctrl + K
+- Responsive mobile experience
+- Reduced-motion accessibility fallback
+
+The printable CV remains available at `/cv.html`.
