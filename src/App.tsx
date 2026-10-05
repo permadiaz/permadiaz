@@ -134,7 +134,10 @@ export default function App() {
   const [mode, setMode] = useState<Mode>('business')
   const [commandOpen, setCommandOpen] = useState(false)
   const [selected, setSelected] = useState<Project | null>(null)
+  const [costInput, setCostInput] = useState('')
   const [margin, setMargin] = useState(18)
+  const [taxMode, setTaxMode] = useState<'off' | '11' | 'custom'>('11')
+  const [customTax, setCustomTax] = useState(12)
   const [easter, setEaster] = useState(0)
 
   const pointerX = useMotionValue(-400)
@@ -172,7 +175,11 @@ export default function App() {
 
   const visibleProjects = useMemo(() => projects.filter(p => p.mode === mode), [mode])
   const capabilities = mode === 'business' ? businessCapabilities : builderCapabilities
-  const sellPrice = 850_000_000 / (1 - margin / 100)
+  const cost = Number(costInput.replace(/\D/g, '')) || 0
+  const sellPrice = cost > 0 ? cost / (1 - margin / 100) : 0
+  const taxRate = taxMode === 'off' ? 0 : taxMode === '11' ? 11 : Math.max(0, customTax)
+  const taxAmount = sellPrice * (taxRate / 100)
+  const finalPrice = sellPrice + taxAmount
 
   return (
     <main className="site">
@@ -236,9 +243,6 @@ export default function App() {
           >
             <a className="button button-primary" href="#work">
               Explore the system <ArrowDownRight size={17} />
-            </a>
-            <a className="button button-ghost" href="/cv.html" target="_blank">
-              Open CV <ArrowUpRight size={16} />
             </a>
           </motion.div>
 
@@ -307,7 +311,7 @@ export default function App() {
         <div className="section-head">
           <div>
             <div className="kicker">Selected systems</div>
-            <h2>Not slides.<br />Things you can <em>touch.</em></h2>
+            <h2>From business problems<br />to <em>working products.</em></h2>
           </div>
           <div className="section-side">
             <MousePointer2 size={16} />
@@ -357,20 +361,32 @@ export default function App() {
           >
             <div className="playground-copy">
               <div className="kicker">Playground · Margin Studio</div>
-              <h3>Move one number.<br />Feel the decision.</h3>
+              <h3>Build your own<br />pricing scenario.</h3>
               <p>
-                This is the idea behind the product: reduce spreadsheet friction and make pricing trade-offs visible immediately.
+                Start with a cost, adjust the margin, then decide whether tax should be added. The numbers react instantly.
               </p>
-              <div className="playground-cost">
+
+              <label className="cost-field">
                 <span>Principle cost</span>
-                <strong>Rp850.000.000</strong>
-              </div>
+                <div className="currency-input">
+                  <span>Rp</span>
+                  <input
+                    inputMode="numeric"
+                    placeholder="0"
+                    value={costInput ? Number(costInput.replace(/\D/g, '')).toLocaleString('id-ID') : ''}
+                    onChange={event => setCostInput(event.target.value.replace(/\D/g, ''))}
+                    aria-label="Principle cost"
+                  />
+                </div>
+              </label>
             </div>
+
             <div className="calculator">
               <div className="calculator-head">
                 <span>Live pricing scenario</span>
                 <Zap size={16} />
               </div>
+
               <label>
                 <div className="range-label">
                   <span>Target margin</span>
@@ -384,16 +400,55 @@ export default function App() {
                   onChange={event => setMargin(Number(event.target.value))}
                 />
               </label>
-              <div className="price-output">
-                <span>Suggested sell price</span>
-                <motion.strong key={margin} initial={{ opacity: .45, y: 5 }} animate={{ opacity: 1, y: 0 }}>
-                  {formatIDR(sellPrice)}
-                </motion.strong>
+
+              <div className="tax-control">
+                <div className="tax-title">
+                  <span>Tax</span>
+                  <b>{taxRate}%</b>
+                </div>
+                <div className="tax-options">
+                  <button className={taxMode === 'off' ? 'active' : ''} onClick={() => setTaxMode('off')}>Off</button>
+                  <button className={taxMode === '11' ? 'active' : ''} onClick={() => setTaxMode('11')}>11%</button>
+                  <button className={taxMode === 'custom' ? 'active' : ''} onClick={() => setTaxMode('custom')}>Custom</button>
+                </div>
+                {taxMode === 'custom' && (
+                  <label className="custom-tax">
+                    <span>Tax rate</span>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={customTax}
+                      onChange={event => setCustomTax(Number(event.target.value))}
+                    />
+                    <b>%</b>
+                  </label>
+                )}
               </div>
-              <div className="calc-meta">
-                <span>Gross profit</span>
-                <b>{formatIDR(sellPrice - 850_000_000)}</b>
-              </div>
+
+              {cost > 0 ? (
+                <>
+                  <div className="price-output">
+                    <span>Sell price before tax</span>
+                    <motion.strong key={'sell-' + margin + cost} initial={{ opacity: .45, y: 5 }} animate={{ opacity: 1, y: 0 }}>
+                      {formatIDR(sellPrice)}
+                    </motion.strong>
+                  </div>
+                  <div className="calc-meta"><span>Gross profit</span><b>{formatIDR(sellPrice - cost)}</b></div>
+                  <div className="calc-meta"><span>Tax ({taxRate}%)</span><b>{formatIDR(taxAmount)}</b></div>
+                  <div className="final-price">
+                    <span>Final price</span>
+                    <motion.strong key={'final-' + margin + taxRate + cost} initial={{ opacity: .5, y: 5 }} animate={{ opacity: 1, y: 0 }}>
+                      {formatIDR(finalPrice)}
+                    </motion.strong>
+                  </div>
+                </>
+              ) : (
+                <div className="calculator-empty">
+                  <span>Enter a cost to start exploring</span>
+                  <small>Then play with margin and tax to see the commercial impact.</small>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -492,7 +547,7 @@ export default function App() {
             <BriefcaseBusiness size={28} />
           </div>
           <div className="contact-actions">
-            <a href="mailto:permadi.diaz@gmail.com"><Mail size={18} /> Email</a>
+            <a href="mailto:dias.permadi@datalabs.id"><Mail size={18} /> Email</a>
             <a href="https://linkedin.com/in/dias-d-permadi-7b9417179" target="_blank" rel="noreferrer"><Linkedin size={18} /> LinkedIn</a>
             <a href="https://github.com/permadiaz" target="_blank" rel="noreferrer"><Github size={18} /> GitHub</a>
           </div>
@@ -572,7 +627,6 @@ export default function App() {
                 ['02', 'Selected work', '#work'],
                 ['03', 'Career', '#career'],
                 ['04', 'Contact', '#contact'],
-                ['05', 'Open CV', '/cv.html'],
               ].map(([number, label, href]) => (
                 <a key={label} href={href} onClick={() => setCommandOpen(false)}>
                   <span><small>{number}</small>{label}</span>
